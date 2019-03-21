@@ -1,0 +1,26 @@
+{
+    "claas":{
+        "grain_in"       : 0.583,
+        "grain_out"      : 5.460,
+        "grain_tank"     : 0.000,
+        "grain_tank_max" : null,
+        "fuel_in"        : null,
+        "fuel_out"       : null,
+        "fuel_burn"      : 1.167,
+        "fuel_tank"      : null,
+        "fuel_tank_max"  : null,
+        "transit_spd"    : null
+    },
+    "jd":{
+        "grain_in"       : null,
+        "grain_out"      : null,
+        "grain_tank"     : null,
+        "grain_tank_max" : null,
+        "fuel_in"        : null,
+        "fuel_out"       : null,
+        "fuel_burn"      : null,
+        "fuel_tank"      : null,
+        "fuel_tank_max"  : null,
+        "transit_spd"    : null
+    }
+}
