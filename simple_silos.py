@@ -51,6 +51,14 @@ Setup initial conditions for simulation
 time = 0
 time_max = 600 #minutes
 delivery_time = 20 #minutes
+data_dict = {
+    "time":[],
+    "source_contents":[],
+    "wet_silo_contents":[],
+    "drier_contents":[],
+    "shed_contents":[]
+}
+data = pd.DataFrame(data_dict)
 
 """
 Iterate backwards through the equipment chain, do the transfers
@@ -60,7 +68,6 @@ while (time <= time_max):
     #Work out if to add more to the source
     if time > 0:
         if time % delivery_time == 0:
-            print("delivery")
             source["contents"] = source["contents"] + 30.0
 
     active = shed #start with the shed
@@ -80,5 +87,19 @@ while (time <= time_max):
             active["contents"] = active["contents"] - transfer
             active["next"]["contents"] = active["next"]["contents"] +transfer
         active = active["prev"] #Move to next
-    print(str(source["contents"])+" / "+str(wet_silo["contents"]))
+
+    #Build the data table and append
+    data_dict["time"] = time
+    data_dict["source_contents"] = source["contents"]
+    data_dict["wet_silo_contents"] = wet_silo["contents"]
+    data_dict["drier_contents"] = drier["contents"]
+    data_dict["shed_contents"] = shed["contents"]
+    temp = pd.DataFrame(data_dict, index=[0])
+    data = data.append(temp)
+
     time = time + 1 #Iterate time
+
+"""
+Do something with the data, like export to Excel
+"""
+data.to_excel('data_out.xlsx')
