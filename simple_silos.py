@@ -1,49 +1,13 @@
+import json
 import numpy as np
 import pandas as pd
 
 """
-Initial conditions
+Load equipment and their initial conditions from a json.
 """
-shed = dict();
-drier = dict();
-wet_silo = dict();
-source = dict();
-
-shed.update({
-    "name"         : "shed",
-    "contents"     : 0, #tn
-    "max_contents" : 14000, #tn
-    "transfer_rate": 4.167, #tn/min 250tn/hr
-    "prev"         : drier,
-    "next"         : None
-})
-
-drier.update({
-    "name"         : "drier",
-    "contents"     : 0, #tn
-    "max_contents" : 0.5, #tn
-    "transfer_rate": 0.5, #tn/min 250tn/hr
-    "prev"         : wet_silo,
-    "next"         : shed
-})
-
-wet_silo.update({
-    "name"         : "wet_silo",
-    "contents"     : 0, #tn
-    "max_contents" : 250, #tn
-    "transfer_rate": 4.167, #tn/min 250tn/hr
-    "prev"         : source,
-    "next"         : drier
-})
-
-source.update({
-    "name"         : "source",
-    "contents"     : 30, #tn
-    "max_contents" : np.inf, #tn, inf because this number represents the ammount that has to be stored elsewhere
-    "transfer_rate": 4.167, #tn/min 250tn/hr
-    "prev"         : None,
-    "next"         : wet_silo
-})
+fi_name = "silo_set.json"
+fi_do = open(fi_name,"r")
+equipment = json.load(fi_do)["equipment"];
 
 """
 Setup initial conditions for simulation
@@ -61,34 +25,12 @@ data_dict = {
 data = pd.DataFrame(data_dict)
 
 """
-Iterate backwards through the equipment chain, do the transfers
+Iterate through the equipment chain, do the transfers
 """
 while (time <= time_max):
 
-    #Work out if to add more to the source
-    if time > 0:
-        if time % delivery_time == 0:
-            source["contents"] = source["contents"] + 30.0
-
-    active = shed #start with the shed
-
-    while active is not None: #go back to the head of the chain
-        if active["next"] is not None: #tail of the chain is a sink
-            #Figure out how much to transfer
-            transfer = active["transfer_rate"]
-            #If current store is nearly empty, only transfer the last bit
-            if (transfer > active["contents"]):
-                transfer = active["contents"]
-            #If the receiver is nearly full, don't overfill
-            if (transfer > (active["next"]["max_contents"] - active["next"]["contents"])):
-                transfer = active["next"]["max_contents"] - active["next"]["contents"]
-
-            #Do the transfers
-            active["contents"] = active["contents"] - transfer
-            active["next"]["contents"] = active["next"]["contents"] +transfer
-        active = active["prev"] #Move to next
-
     #Build the data table and append
+    #Do all this at the start of the time frame
     data_dict["time"] = time
     data_dict["source_contents"] = source["contents"]
     data_dict["wet_silo_contents"] = wet_silo["contents"]
@@ -97,9 +39,45 @@ while (time <= time_max):
     temp = pd.DataFrame(data_dict, index=[0])
     data = data.append(temp)
 
+    active = equipment["source"]
+
+    while not active["is_sink"]:
+        #Figure out how much to transfer
+        #Work out where to transfer to
+        #Do the transfer
+        #Calculate the new destination moisture
+        #Go to destination
+
+
+    # while active is not None: #go back to the head of the chain
+    #     if active["next"] is not None: #tail of the chain is a sink
+    #         #Figure out how much to transfer
+    #         transfer = active["transfer_rate"]
+    #         #If current store is nearly empty, only transfer the last bit
+    #         if (transfer > active["contents"]):
+    #             transfer = active["contents"]
+    #         #If the receiver is nearly full, don't overfill
+    #         if (transfer > (active["next"]["max_contents"] - active["next"]["contents"])):
+    #             transfer = active["next"]["max_contents"] - active["next"]["contents"]
+    #
+    #         #Do the transfers
+    #         active["contents"] = active["contents"] - transfer
+    #         active["next"]["contents"] = active["next"]["contents"] +transfer
+    #     active = active["next"] #Move to next
+    #
+    # #Work out if to add more to the source
+    # if time > 0:
+    #     if time % delivery_time == 0:
+    #         source["contents"] = source["contents"] + 30.0
+
     time = time + 1 #Iterate time
 
 """
 Do something with the data, like export to Excel
 """
 data.to_excel('data_out.xlsx')
+
+## TODO:
+# def action_node switch destination based on incoming property
+# def action_drier build into moisture model
+# def delivery with moisture variation

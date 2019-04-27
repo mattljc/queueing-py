@@ -1,0 +1,97 @@
+{
+    "equipment":[
+        {
+            "name"         :"source",
+            "contents"     :0.0,
+            "max_contents" :1e9,
+            "moisture"     :0.0,
+            "transfer_rate":4.167,
+            "is_node"      :false,
+            "is_drier"     :false,
+            "prev"         :null,
+            "is_source"    :true,
+            "is_sink"      :false,
+            "next"         :"node_1"
+        },
+        {
+            "name"         :"node_1",
+            "contents"     :0.0,
+            "max_contents" :4.167,
+            "moisture"     :0.0,
+            "transfer_rate":4.167,
+            "is_node"      :true,
+            "is_drier"     :false,
+            "is_source"    :false,
+            "is_sink"      :false,
+            "decision"     :"moisture",
+            "value"        :[0.12,0.13],
+            "next"         :["shed","dry_silo","wet_silo"],
+            "prev"         :"source"
+        },
+        {
+            "name"         :"wet_silo",
+            "contents"     :0.0,
+            "max_contents" :250,
+            "moisture"     :0.0,
+            "transfer_rate":4.167,
+            "is_node"      :false,
+            "is_drier"     :false,
+            "is_source"    :false,
+            "is_sink"      :false,
+            "prev"         :"node_1",
+            "next"         :"drier"
+        },
+        {
+            "name"         :"drier",
+            "contents"     :0.0,
+            "max_contents" :0.5,
+            "moisture"     :0.125,
+            "transfer_rate":0.5,
+            "is_node"      :false,
+            "is_drier"     :true,
+            "prev"         :"wet_silo",
+            "next"         :"dry_silo"
+        },
+        {
+            "name"         :"shed",
+            "contents"     :0.0,
+            "max_contents" :14000,
+            "moisture"     :0.0,
+            "transfer_rate":0.5,
+            "is_node"      :false,
+            "is_drier"     :false,
+            "is_source"    :false,
+            "is_sink"      :false,
+            "prev"         :"node_1",
+            "next"         :"node_2"
+        },
+        {
+            "name"         :"node_2",
+            "contents"     :0.0,
+            "max_contents" :4.167,
+            "moisture"     :0.0,
+            "transfer_rate":4.167,
+            "is_node"      :true,
+            "is_drier"     :false,
+            "is_source"    :false,
+            "is_sink"      :false,
+            "decision"     :"moisture",
+            "value"        :[0.12,0.13],
+            "next"         :["shed","dry_silo","wet_silo"],
+            "prev"         :"shed"
+        }
+        {
+            "name"         :"dry_silo",
+            "contents"     :0.0,
+            "max_contents" :12000,
+            "moisture"     :0.0,
+            "transfer_rate":4.167,
+            "is_node"      :false,
+            "is_drier"     :false,
+            "is_source"    :false,
+            "is_sink"      :true,
+            "prev"         :"node_1",
+            "next"         :null
+        },
+    ]
+}
