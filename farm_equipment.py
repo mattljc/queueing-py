@@ -5,19 +5,54 @@ import json
 import copy
 import numpy as n
 import pandas as p
+import process_sim.Iterated_Model
+
+class Farm():
+    """
+    A farm has equipment and fields. Mostly just a collector class.
+    Serves as a node for equipment to cross reference eachother.
+    """
+
+    def __init__(self, model, **args):
+        """
+        Initialize important variables. Can also initialize from a json by
+        calling with an argument 'json_file' which contains the path to a valid
+        json_file.
+        """
+        self.fields = []
+        self.equipment = []
+        self.model = []
+
+        if 'json_file' in args:
+            data_in = open(library_file,'r')
+            data_proc = json.load(data_in))
+
+            for data in data_proc['fields']:
+                f = Field(data)
+                self.fields.append(f)
+
+            for data in data_proc['equipment']:
+                init_lookup = {'harvester':Harvester}
+
+
+
+class (Field):
+    """
+    """
 
 class Equipment():
     """
     Equipemt is the super class from which all farm equipment types inherit.
     """
 
-    def __init__(self):
+    def __init__(self, model):
         """
         Constructor defines the minimum interface for the simulation to run.
         """
         self.state = None
         self.location = None
         self.proximity = None
+        self.resources = [];
         self.properties = {
             "grain_in"       : None, #tn/min, rate of grain uptake (i.e. harvest)
             "grain_out"      : None, #tn/min, rate of grain offload (i.e. augur)
@@ -33,10 +68,65 @@ class Equipment():
         self.library = {}
         self.table = {}
 
-    def state_iterator():
+        assert model is process_sim.Iterated_model
+        self.model = model;
+
+
+    def state_iterator(self, field):
         """
         Performs actions based on current state for "this" time step. Updates
         state for the "next" time step.
+        """
+        current_state = self.state
+
+        if current_state is None:
+            """
+            Poorly initialized, but set state to idle.
+            """
+            self.state = "idle"
+        elif current_state is "harvest":
+            """
+            Harvesting grain and storing internally. Check that you are in a
+            field though, otherwise default to idle.
+            """
+
+        elif current_state is "harvest+grain-off":
+            """
+            Harvesting and offloading to a chaser. Check that the chaser is
+            there, otherwise default to harvest.
+            """
+
+        elif current_state is "grain-off":
+            """
+            Offloading grain only. Check that the chaser is there, otherwise
+            move to idle-grain.
+            """
+
+        elif current_state is "transit":
+            """
+            Moving from one location to another.
+            """
+
+        elif current_state is "idle-fuel":
+            """
+            Vehicle is idle because it is out of fuel. Wait for the fuel tank to
+            be full before doing anything else.
+            """
+
+        elif current_state is "idle-grain":
+
+        elif current_state is "idle-human":
+
+        elif current_state is "idle":
+            """
+            This is the default state. Check everything to figure out if there
+            is something else that should be done.
+            """
+
+    def do_action():
+        """
+        This function is called by state_iterator where equipment specific
+        action is to be taken.
         """
         raise NotImplementedError
 
@@ -67,8 +157,8 @@ class Harvester(Equipment):
     """
     possible_states = [
         "harvest",
-        "harvest+grain_off",
-        "grain_off",
+        "harvest+grain-off",
+        "grain-off",
         "transit",
         "idle",
         "idle-fuel",
@@ -83,12 +173,8 @@ class Harvester(Equipment):
         super().__init__()
         self.properties[k] = copy.deepcopy(library[make])
 
-    def state_iterator():
-        """
-        Performs actions based on current state for "this" time step. Updates
-        state for the "next" time step.
-        """
-        raise NotImplementedError
+
+
 
 class Chaser(Equipment):
     """
