@@ -59,7 +59,7 @@
             "contents"     :0.0,
             "max_contents" :14000,
             "moisture"     :0.0,
-            "transfer_rate":0.5,
+            "transfer_rate":4.167,
             "is_node"      :false,
             "is_drier"     :false,
             "is_source"    :false,
